@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class LabRBTree {
 	
-	private static final int ITERATIONS = 1000;
+	private static final int ITERATIONS = 10;
 
 	public static void main(String[] args) {
 		RBTree<Integer> tree = new RBTree<Integer>();
@@ -46,42 +46,17 @@ public class LabRBTree {
 //			System.out.println("Goodbye!");
 //		}
 		
-
-		int adds[] = new int[ITERATIONS];
-		int dels[] = new int[ITERATIONS];
-		boolean ok = true;
-		
+			
 		for(int i = 0; i < ITERATIONS; i++){
-			adds[i] = rand.nextInt(1000);
-			tree.add(adds[i]);
-			if(tree.getBlackHeight() == -1 || !tree.check()){
-				System.out.println(tree);
-				for(int j = 0; j <= i; j++){
-					System.out.printf("%d ",adds[j]);
-				}
-				System.out.println("");
-				ok = false;
-				break;
-			}
-		}
-		if(ok){
-			for(int i = 0; i < ITERATIONS; i++){
-				dels[i] = rand.nextInt(1000);
-				tree.delete(dels[i]);
-				if(tree.getBlackHeight() == -1 || !tree.check()){
-					System.out.println(tree);
-					for(int j = 0; j < ITERATIONS; j++){
-						System.out.printf("%d ",adds[j]);
-					}
-					System.out.println("");
-					for(int j = 0; j <= i; j++){
-						System.out.printf("%d ",dels[j]);
-					}
-					System.out.println("");
-					break;					
-				}
-			}
+			tree.add(rand.nextInt(1000));
 		}
 		System.out.println(tree);
+		
+		for(int i: tree){
+			System.out.printf("%d ", i);
+		}
+		
+		System.out.println("");
+		
 	}
 }

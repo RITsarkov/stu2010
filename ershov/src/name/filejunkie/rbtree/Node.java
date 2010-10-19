@@ -108,4 +108,58 @@ class Node<T extends Comparable<T>>{
 	public String toString() {
 		return value.toString() + "." + (this.isRed()?"R":"B") + "(" + (left == null?"":left.toString()) + ")(" + (right == null?"":right.toString()) + ")";
 	}
+
+	public boolean hasNext() {
+		if(this.getRight() != null){
+			return true;
+		}
+		if(this.getParent() == null){
+			return false;
+		}
+		
+		return this.getParent().hasNext(this);
+	}
+
+	private boolean hasNext(Node<T> node) {
+		if(this.getLeft() == node){
+			return true;
+		}
+		if(this.getParent() == null){
+			return false;
+		}
+		
+		return this.getParent().hasNext(this);
+	}
+
+	public Node<T> next() {
+		if(this.getRight() != null){
+			return this.getRight().getLeast();
+		}
+		if(this.getParent() == null){
+			return null;
+		}
+		
+		return this.getParent().getNext(this);
+	}
+
+	private Node<T> getNext(Node<T> node) {
+		if(this.getLeft() == node){
+			return this;
+		}
+		if(this.getParent() == null){
+			return null;
+		}
+		
+		return this.getParent().getNext(this);
+	}
+
+	public Node<T> getLeast() {
+		if(this.getLeft() == null){
+			return this;
+		}
+		else{
+			return this.getLeft().getLeast();
+		}
+		
+	}
 }

@@ -1,5 +1,8 @@
 package name.filejunkie.rbtree;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import name.filejunkie.rbtree.Node.Color;
 
 /**
@@ -9,9 +12,10 @@ import name.filejunkie.rbtree.Node.Color;
  * @version 2010.09.26
  * @since 1.6
  */
-public class RBTree<T extends Comparable<T>> implements RedBlackTree<T>{
-	
-	Node<T> root;
+public class RBTree<T extends Comparable<T>> implements RedBlackTree<T>, Iterable<T>{
+
+	private Node<T> root;
+
 	
 	/**
 	 * Default constructor
@@ -27,7 +31,6 @@ public class RBTree<T extends Comparable<T>> implements RedBlackTree<T>{
 	 */
 	@Override
 	public void add(T e) {
-		
 		Node<T> cur = this.root;		
 		if(this.root == null){
 			cur = this.root = new Node<T>(e, null);
@@ -441,5 +444,54 @@ public class RBTree<T extends Comparable<T>> implements RedBlackTree<T>{
 			c.setParent(p);
 		
 	}
+
+	@Override
+	public Iterator<T> iterator() {
+		return new RBTreeIterator();
+	}
 	
+	private class RBTreeIterator implements Iterator<T> {
+		private Node<T> curr = null; 
+
+		@Override
+		public boolean hasNext() {
+			if(curr == null){
+				if(root != null){
+					return true;
+				}
+				else{
+					return false;
+				}
+			}
+			return curr.hasNext();
+
+		}
+
+		@Override
+		public T next() {
+			if(curr == null){
+				if(root != null){
+					curr = root.getLeast();
+				}
+				else{
+					throw new NoSuchElementException("There are no more elements");
+				}
+			}
+			else{
+				curr = curr.next();
+			}
+			if(curr == null){
+				throw new NoSuchElementException("There are no more elements");
+			}
+			return curr.getValue();
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+			
+		}
+
+	}
 }
+
