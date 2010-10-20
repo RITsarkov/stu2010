@@ -122,20 +122,7 @@ public class RBTree<T extends Comparable<T>> implements RedBlackTree<T>, Iterabl
 			}
 		}
 		
-		// case 1: node being deleted has two children.
-		// so, we found it, copied the least greater value to it
-		// and new node to be deleted will be the deleted in case 2
-		if(cur.getLeft() != null && cur.getRight() != null){
-			Node<T> next = cur.getRight();
-			while(next.getLeft() != null){
-				next = next.getLeft();
-			}
-			cur.setValue(next.getValue());
-			delete(next);
-		}
-		else{
-			delete(cur);
-		}
+		delete(cur);
 		
 		return true;
 	}
@@ -235,6 +222,15 @@ public class RBTree<T extends Comparable<T>> implements RedBlackTree<T>, Iterabl
 	
 
 	private void delete(Node<T> node) {
+		if(node.getLeft() != null && node.getRight() != null){
+			Node<T> next = node.getRight();
+			while(next.getLeft() != null){
+				next = next.getLeft();
+			}
+			node.setValue(next.getValue());
+			node = next;
+		}
+		
 		//it is assumed that node has no more than one child
 		Node<T> child;
 		if(node.getLeft() != null)
