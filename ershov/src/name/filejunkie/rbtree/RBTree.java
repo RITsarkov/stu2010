@@ -474,7 +474,7 @@ public class RBTree<T extends Comparable<T>> implements RedBlackTree<T>, Iterabl
 				}
 			}
 			else{
-				curr = curr.next();
+				curr = curr.getNext();
 			}
 			if(curr == null){
 				throw new NoSuchElementException("There are no more elements");
@@ -484,7 +484,14 @@ public class RBTree<T extends Comparable<T>> implements RedBlackTree<T>, Iterabl
 
 		@Override
 		public void remove() {
-			throw new UnsupportedOperationException();
+			if(curr == null){
+				throw new NoSuchElementException("There are no more elements");
+			}
+			
+			Node<T> victim = curr;
+			
+			curr = curr.getPrev();
+			delete(victim);
 			
 		}
 

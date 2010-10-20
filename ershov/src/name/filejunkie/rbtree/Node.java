@@ -131,7 +131,7 @@ class Node<T extends Comparable<T>>{
 		return this.getParent().hasNext(this);
 	}
 
-	public Node<T> next() {
+	public Node<T> getNext() {
 		if(this.getRight() != null){
 			return this.getRight().getLeast();
 		}
@@ -161,5 +161,36 @@ class Node<T extends Comparable<T>>{
 			return this.getLeft().getLeast();
 		}
 		
+	}
+
+	public Node<T> getPrev() {
+		if(this.getLeft() != null){
+			return this.getLeft().getMost();
+		}
+		if(this.getParent() == null){
+			return null;
+		}
+		
+		return this.getParent().getPrev(this);
+	}
+
+	private Node<T> getPrev(Node<T> node) {
+		if(this.getRight() == node){
+			return this;
+		}
+		if(this.getParent() == null){
+			return null;
+		}
+		
+		return this.getParent().getPrev(this);
+	}
+	
+	public Node<T> getMost() {
+		if(this.getRight() == null){
+			return this;
+		}
+		else{
+			return this.getRight().getMost();
+		}
 	}
 }

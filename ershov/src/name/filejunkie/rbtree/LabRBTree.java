@@ -6,6 +6,7 @@ package name.filejunkie.rbtree;
  * @since 1.6
  */
 //import java.util.InputMismatchException;
+import java.util.Iterator;
 import java.util.Random;
 //import java.util.Scanner;
 
@@ -55,8 +56,21 @@ public class LabRBTree {
 		for(int i: tree){
 			System.out.printf("%d ", i);
 		}
-		
 		System.out.println("");
+		
+		int j = 0;
+		Iterator<Integer> it = tree.iterator();
+		while(it.hasNext()){
+			it.next();
+			if(++j % 2 == 1){
+				it.remove();
+			}
+		}
+		for(int i: tree){
+			System.out.printf("%d ", i);
+		}
+		System.out.println("");
+		System.out.println(tree);
 		
 	}
 }
