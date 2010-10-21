@@ -130,6 +130,9 @@ public class RBTree<T extends Comparable<T>> implements RedBlackTree<T>{
 	 * @return black height, or -1 if tree is not a valid red-black tree
 	 */
 	public int getBlackHeight(){
+		if(root == null){
+			return 0;
+		}
 		return getBlackHeight(root);
 	}
 
@@ -139,8 +142,13 @@ public class RBTree<T extends Comparable<T>> implements RedBlackTree<T>{
 	 * @return tree as a string
 	 */
 	@Override
-	public String toString() {		
-		return root.toString();
+	public String toString() {
+		if(root == null){
+			return "<empty>";
+		}
+		else{
+			return root.toString();
+		}
 	}
 
 	
@@ -262,7 +270,7 @@ public class RBTree<T extends Comparable<T>> implements RedBlackTree<T>{
 				node.setParent(null);
 			}
 			else{
-				node.setValue(null);
+				root = null;
 			}
 		}
 		
@@ -437,5 +445,4 @@ public class RBTree<T extends Comparable<T>> implements RedBlackTree<T>{
 			c.setParent(p);
 		
 	}
-	
 }
