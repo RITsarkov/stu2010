@@ -81,13 +81,16 @@ public class CheeseShop {
 		@Override
 		public void run() {
 			while (!Thread.currentThread().isInterrupted()) {
-				/*try {
+				try {
 					synchronized(this){
-						wait();
+						wait(1500);
 					}
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-				}*/
+				}
+				if(tickets.isEmpty()){
+					break;
+				}
 				while(!tickets.isEmpty()){
 					Ticket t = tickets.last();
 					tickets.remove(t);
