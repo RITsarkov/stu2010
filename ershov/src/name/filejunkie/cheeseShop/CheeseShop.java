@@ -83,7 +83,7 @@ public class CheeseShop {
 			while (!Thread.currentThread().isInterrupted()) {
 				try {
 					synchronized(this){
-						wait(1500);
+						wait(15);
 					}
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -95,7 +95,7 @@ public class CheeseShop {
 					Ticket t = tickets.last();
 					tickets.remove(t);
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(10);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -138,7 +138,7 @@ public class CheeseShop {
 		@Override
 		public int compareTo(Ticket e) {			
 			if(this.getType() == e.getType()){
-				return this.getNumber() - e.getNumber();
+				return e.getNumber() - this.getNumber();
 			}
 			
 			if(this.getType() == ProcessType.arrogant){
