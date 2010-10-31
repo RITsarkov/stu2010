@@ -1,10 +1,7 @@
 package name.filejunkie.cheeseShop;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Vector;
 import java.util.LinkedList;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class CheeseShop {
 	private final int THREAD_COUNT = 2;
@@ -13,9 +10,9 @@ public class CheeseShop {
 		arrogant, plain;
 	}
 	
-	ArrayList<Arrogant> arrogant = null;
-	ArrayList<Plain> plain = null;
-	SortedSet<Ticket> tickets = null;
+	Vector<Arrogant> arrogant = null;
+	Vector<Plain> plain = null;
+	Vector<Ticket> tickets = null;
 	Cashier cashier = null;
 	
 	private class Arrogant implements Runnable{
@@ -28,8 +25,8 @@ public class CheeseShop {
 		@Override
 		public void run() {
 			while (!Thread.currentThread().isInterrupted()) {
-				System.out.println("Arrogant thread " + number + " started");
 				synchronized(tickets){
+					System.out.println("Arrogant thread " + number + " started");
 					tickets.add(new Ticket(ProcessType.arrogant, number));
 				}
 				synchronized(cashier){
@@ -58,8 +55,8 @@ public class CheeseShop {
 		@Override
 		public void run() {
 			while (!Thread.currentThread().isInterrupted()) {
-				System.out.println("Plain thread " + number + " started");
 				synchronized(tickets){
+					System.out.println("Plain thread " + number + " started");
 					tickets.add(new Ticket(ProcessType.plain, number));
 				}
 				synchronized(cashier){
@@ -94,8 +91,21 @@ public class CheeseShop {
 					break;
 				}
 				while(!tickets.isEmpty()){
-					Ticket t = tickets.last();
-					tickets.remove(t);
+					Ticket t = null;
+					synchronized(tickets){
+						for(Ticket i: tickets){
+							if(i.getType() == ProcessType.arrogant){
+								t = i;
+								tickets.remove(i);
+								break;
+						}
+						}
+						if(t == null){
+							t = tickets.get(0);
+							tickets.remove(0);
+						}
+					}
+					
 					try {
 						Thread.sleep(10);
 					} catch (InterruptedException e) {
@@ -119,7 +129,7 @@ public class CheeseShop {
 		
 	}
 	
-	private class Ticket implements Comparable<Ticket>{
+	private class Ticket{
 		private ProcessType type;
 		private int number;
 		
@@ -135,23 +145,6 @@ public class CheeseShop {
 		public int getNumber() {
 			return number;
 		}
-
-
-		@Override
-		public int compareTo(Ticket e) {			
-			if(this.getType() == e.getType()){
-				return e.getNumber() - this.getNumber();
-			}
-			
-			if(this.getType() == ProcessType.arrogant){
-				return 1;
-			}
-			else{
-				return -1;
-			}		
-		}
-		
-		
 	}
 	
 	public static void main(String[] args) {
@@ -159,9 +152,9 @@ public class CheeseShop {
 	}
 
 	private void run() {
-		arrogant = new ArrayList<Arrogant>();
-		plain = new ArrayList<Plain>();
-		tickets = Collections.synchronizedSortedSet(new TreeSet<Ticket>());
+		arrogant = new Vector<Arrogant>();
+		plain = new Vector<Plain>();
+		tickets = new Vector<Ticket>();
 		cashier = new Cashier();
 
 		Thread tCashier = new Thread(cashier, "Cashier thread ");
