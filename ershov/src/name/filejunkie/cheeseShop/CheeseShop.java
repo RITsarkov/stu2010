@@ -1,7 +1,9 @@
 package name.filejunkie.cheeseShop;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class CheeseShop {
@@ -13,7 +15,7 @@ public class CheeseShop {
 	
 	ArrayList<Arrogant> arrogant = null;
 	ArrayList<Plain> plain = null;
-	TreeSet<Ticket> tickets = null;
+	SortedSet<Ticket> tickets = null;
 	Cashier cashier = null;
 	
 	private class Arrogant implements Runnable{
@@ -159,7 +161,7 @@ public class CheeseShop {
 	private void run() {
 		arrogant = new ArrayList<Arrogant>();
 		plain = new ArrayList<Plain>();
-		tickets = new TreeSet<Ticket>();
+		tickets = Collections.synchronizedSortedSet(new TreeSet<Ticket>());
 		cashier = new Cashier();
 
 		Thread tCashier = new Thread(cashier, "Cashier thread ");
