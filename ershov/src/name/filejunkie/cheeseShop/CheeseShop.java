@@ -5,30 +5,31 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class CheeseShop {
-	private final int THREAD_COUNT = 2;
+	private final int THREAD_COUNT = 4;
 	
 	private enum ProcessType {
 		arrogant, plain;
 	}
 	
-	LinkedList<Arrogant> arrogant = null;
-	LinkedList<Plain> plain = null;
+	LinkedList<Buyer> buyers = null;
 	List<Ticket> tickets = null;
 	Cashier cashier = null;
 	
-	private class Arrogant implements Runnable{
+	private class Buyer implements Runnable{
 		private int number;
+		private ProcessType type;
 		
-		public Arrogant(int number){
+		public Buyer(int number, ProcessType type){
 			this.number = number;
+			this.type = type;
 		}
 		
 		@Override
 		public void run() {
 			while (!Thread.currentThread().isInterrupted()) {
 				synchronized(tickets){
-					System.out.println("Arrogant thread " + number + " started");
-					tickets.add(new Ticket(ProcessType.arrogant, number));
+					System.out.println((type == ProcessType.arrogant ? "Arrogant" : "Plain") + " thread " + number + " started");
+					tickets.add(new Ticket(type, number));
 				}
 				synchronized(cashier){
 					cashier.notify();
@@ -40,44 +41,13 @@ public class CheeseShop {
 						e.printStackTrace();
 					}
 				}
-				System.out.println("Arrogant thread " + number + " finished");
+				System.out.println((type == ProcessType.arrogant ? "Arrogant" : "Plain") + " thread " + number + " finished");
 				break;
 			}
 		}
-	}
-	
-	private class Plain implements Runnable{
-		private int number;
-		
-		public Plain(int number){
-			this.number = number;
-		}
-				
-		@Override
-		public void run() {
-			while (!Thread.currentThread().isInterrupted()) {
-				synchronized(tickets){
-					System.out.println("Plain thread " + number + " started");
-					tickets.add(new Ticket(ProcessType.plain, number));
-				}
-				synchronized(cashier){
-					cashier.notify();
-				}
-				synchronized(this){
-					try {
-						wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-				System.out.println("Plain thread " + number + " finished");
-				break;
-			}
-		}		
 	}
 	
 	private class Cashier implements Runnable{
-
 		@Override
 		public void run() {
 			while (!Thread.currentThread().isInterrupted()) {
@@ -91,39 +61,29 @@ public class CheeseShop {
 				if(tickets.isEmpty()){
 					break;
 				}
-				while(!tickets.isEmpty()){
-					Ticket t = null;
-					synchronized(tickets){
-						for(Ticket i: tickets){
-							if(i.getType() == ProcessType.arrogant){
-								t = i;
-								tickets.remove(i);
-								break;
-						}
-						}
-						if(t == null){
-							t = tickets.get(0);
-							tickets.remove(0);
-						}
+				Ticket t = null;
+				synchronized(tickets){
+					for(Ticket i: tickets){
+						if(i.getType() == ProcessType.arrogant){
+							t = i;
+							tickets.remove(i);
+							break;
 					}
-					
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
 					}
-					if(t.getType() == ProcessType.arrogant){
-						Arrogant a = arrogant.get(t.getNumber());
-						synchronized(a){
-							a.notify();
-						}
+					if(t == null){
+						t = tickets.get(0);
+						tickets.remove(0);
 					}
-					else{
-						Plain p = plain.get(t.getNumber());
-						synchronized(p){
-							p.notify();
-						}
-					}
+				}
+				
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				Buyer b = buyers.get(t.getNumber());
+				synchronized (b) {
+					b.notify();
 				}
 			}
 		}
@@ -153,8 +113,7 @@ public class CheeseShop {
 	}
 
 	private void run() {
-		arrogant = new LinkedList<Arrogant>();
-		plain = new LinkedList<Plain>();
+		buyers = new LinkedList<Buyer>();
 		tickets = Collections.synchronizedList(new LinkedList<Ticket>());
 		cashier = new Cashier();
 
@@ -164,12 +123,9 @@ public class CheeseShop {
 		LinkedList<Thread> threads = new LinkedList<Thread>();
 		
 		for(int i = 0; i < THREAD_COUNT; i++){
-			Arrogant a = new Arrogant(i);
-			Plain p = new Plain(i);
-			arrogant.add(a);
-			plain.add(p);
-			threads.add(new Thread(a, "Arrogant thread " + i));
-			threads.add(new Thread(p, "Plain thread " + i));			
+			Buyer a = new Buyer(i, i%2 == 0 ? ProcessType.arrogant : ProcessType.plain);
+			buyers.add(a);
+			threads.add(new Thread(a, (i%2 == 0 ? "Arrogant" : "Plain") + " thread " + i));			
 		}
 		for(Thread t: threads){
 			t.start();
