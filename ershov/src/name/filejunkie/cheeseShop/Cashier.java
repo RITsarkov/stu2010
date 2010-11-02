@@ -49,7 +49,7 @@ class Cashier implements Runnable{
 			}
 			Buyer b = buyers.get(t.getNumber());
 			synchronized (b) {
-				b.notify();
+				b.cheese();
 			}
 		}
 	}

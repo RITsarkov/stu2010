@@ -29,4 +29,8 @@ class Buyer implements Runnable{
 			break;
 		}
 	}
+
+	public void cheese() {
+		this.notify();
+	}
 }
