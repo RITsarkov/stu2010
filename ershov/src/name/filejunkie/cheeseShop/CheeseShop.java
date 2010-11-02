@@ -1,7 +1,8 @@
 package name.filejunkie.cheeseShop;
 
-import java.util.Vector;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 public class CheeseShop {
 	private final int THREAD_COUNT = 2;
@@ -10,9 +11,9 @@ public class CheeseShop {
 		arrogant, plain;
 	}
 	
-	Vector<Arrogant> arrogant = null;
-	Vector<Plain> plain = null;
-	Vector<Ticket> tickets = null;
+	LinkedList<Arrogant> arrogant = null;
+	LinkedList<Plain> plain = null;
+	List<Ticket> tickets = null;
 	Cashier cashier = null;
 	
 	private class Arrogant implements Runnable{
@@ -152,9 +153,9 @@ public class CheeseShop {
 	}
 
 	private void run() {
-		arrogant = new Vector<Arrogant>();
-		plain = new Vector<Plain>();
-		tickets = new Vector<Ticket>();
+		arrogant = new LinkedList<Arrogant>();
+		plain = new LinkedList<Plain>();
+		tickets = Collections.synchronizedList(new LinkedList<Ticket>());
 		cashier = new Cashier();
 
 		Thread tCashier = new Thread(cashier, "Cashier thread ");
