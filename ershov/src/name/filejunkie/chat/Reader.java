@@ -30,12 +30,18 @@ public class Reader implements Runnable {
 				String name = sIn.readLine();
 				clients.add(sOut);
 				
+				String message;
 				while(true){
-					messages.put(name + ": " + sIn.readLine());
+					message = sIn.readLine();
+					if(message == null){
+						clients.remove(sOut);
+						s.close();
+						break;
+					}
+					messages.put(name + ": " + message);
 				}
 				
 			} catch (IOException e) {
-				e.printStackTrace();
 				break;
 			} catch (InterruptedException e) {
 				e.printStackTrace();

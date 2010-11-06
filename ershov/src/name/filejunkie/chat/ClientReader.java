@@ -2,6 +2,7 @@ package name.filejunkie.chat;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.SocketException;
 
 public class ClientReader implements Runnable {
 	private BufferedReader sIn;
@@ -15,7 +16,11 @@ public class ClientReader implements Runnable {
 		while(!Thread.currentThread().isInterrupted()){
 			try {
 				System.out.println(sIn.readLine());
-			} catch (IOException e) {
+			}
+			catch(SocketException e){
+				break;
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 				break;
 			}

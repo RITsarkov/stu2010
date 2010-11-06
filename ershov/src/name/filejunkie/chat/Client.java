@@ -31,6 +31,7 @@ public class Client {
 		while(true){
 			line = in.nextLine();
 			if(line.equalsIgnoreCase("quit")){
+				s.close();
 				break;
 			}
 			sOut.println(line);
